@@ -42,8 +42,8 @@ const config: Config = {
     image: 'img/logo.png',
     colorMode: {
       defaultMode: 'dark',
-      disableSwitch: false,
-      respectPrefersColorScheme: true,
+      disableSwitch: true,
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: 'LiteLog',

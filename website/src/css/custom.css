@@ -26,6 +26,7 @@
   --ifm-background-surface-color: #111113;
   --ifm-navbar-background-color: rgba(9, 9, 11, 0.85);
   --ifm-footer-background-color: #09090b;
+  --ifm-footer-color: #52525b;
   --ifm-color-emphasis-300: #27272a;
   --ifm-toc-border-color: #27272a;
   --ifm-hr-border-color: #27272a;
@@ -450,7 +451,32 @@ html {
    Footer
    ===================== */
 .footer {
-  border-top: 1px solid #27272a;
+  border-top: 1px solid #1a1a1c;
+  background: #09090b !important;
+}
+
+.footer__title {
+  color: #e4e4e7;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.footer__link-item {
+  color: #52525b !important;
+  font-size: 0.875rem;
+  transition: color 0.15s ease;
+}
+
+.footer__link-item:hover {
+  color: #a1a1aa !important;
+  text-decoration: none;
+}
+
+.footer__copyright {
+  color: #3f3f46;
+  font-size: 0.8rem;
 }
 
 /* =====================
