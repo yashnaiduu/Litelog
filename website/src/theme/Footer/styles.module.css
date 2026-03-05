@@ -1,0 +1,142 @@
+.footer {
+    background: #09090b;
+    border-top: 1px solid #1a1a1c;
+    padding: 4rem 0 2rem;
+}
+
+.inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* ── Top row ── */
+.top {
+    display: flex;
+    justify-content: space-between;
+    gap: 4rem;
+    padding-bottom: 3.5rem;
+    border-bottom: 1px solid #1a1a1c;
+}
+
+/* ── Brand ── */
+.brand {
+    flex-shrink: 0;
+    max-width: 260px;
+}
+
+.brandLogo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.logo {
+    height: 28px;
+    width: auto;
+}
+
+.wordmark {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #e4e4e7;
+    letter-spacing: -0.01em;
+}
+
+.brandTagline {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #52525b;
+    margin-bottom: 1.5rem;
+}
+
+.githubBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #71717a !important;
+    background: #111113;
+    border: 1px solid #27272a;
+    border-radius: 6px;
+    padding: 0.45rem 0.875rem;
+    text-decoration: none !important;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.githubBtn:hover {
+    border-color: #3f3f46;
+    color: #a1a1aa !important;
+}
+
+/* ── Link columns ── */
+.columns {
+    display: flex;
+    gap: 4rem;
+}
+
+.column {
+    min-width: 120px;
+}
+
+.colHeading {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #52525b;
+    margin-bottom: 1rem;
+}
+
+.colList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.colLink {
+    font-size: 0.875rem;
+    color: #71717a !important;
+    text-decoration: none !important;
+    transition: color 0.15s ease;
+}
+
+.colLink:hover {
+    color: #e4e4e7 !important;
+}
+
+/* ── Bottom bar ── */
+.bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.75rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.copyright {
+    font-size: 0.78rem;
+    color: #3f3f46;
+}
+
+.bottomLinks {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.bottomLink {
+    font-size: 0.78rem;
+    color: #3f3f46;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.bottomLink:hover {
+    color: #71717a;
+}
