@@ -40,7 +40,12 @@ LiteLog replaces this entirely. It is a single Go binary that acts as an HTTP lo
 
 ## Quick Start
 
-**Clone and build:**
+**Install with Go:**
+```bash
+go install github.com/yashnaiduu/Litelog/cmd/litelog@latest
+```
+
+**Or clone and build from source:**
 ```bash
 git clone https://github.com/yashnaiduu/Litelog.git
 cd Litelog
