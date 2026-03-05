@@ -79,22 +79,24 @@ html {
 }
 
 .hero-logo-wrapper {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .hero-logo {
-  height: 48px;
+  height: 96px;
   width: auto;
 }
 
 .hero-wordmark {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #71717a;
 }
 
 .hero-badge {
