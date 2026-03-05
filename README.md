@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logo.png" alt="LiteLog Logo" width="350">
+  <img src="assets/logo.png" alt="LiteLog Logo" width="350">
   <p><b>Centralized logging without the infrastructure. The SQLite of logging systems.</b></p>
 
   [![Go](https://img.shields.io/badge/go-1.21%2B-333333.svg?style=flat-square&logo=go)](https://github.com/yashnaiduu/Litelog)
