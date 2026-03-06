@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
+  path_instructions:
+    - path: "**/*.go"
+      instructions: |
+        Review Go code for idiomatic style, error handling, and performance.
+        Flag any missing error checks, goroutine leaks, or unsafe concurrent access.
+        Ensure code follows gofmt -s formatting standards.
+    - path: "cmd/**"
+      instructions: |
+        Check CLI flag naming consistency and that all flags have proper descriptions.
+    - path: "storage/**"
+      instructions: |
+        Pay close attention to SQL query safety, transaction boundaries, and WAL mode assumptions.
+    - path: "server/**"
+      instructions: |
+        Review HTTP handler error responses, request validation, and goroutine safety.
+chat:
+  auto_reply: true
