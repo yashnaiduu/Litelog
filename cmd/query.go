@@ -81,3 +81,4 @@ func init() {
 	queryCmd.Flags().StringVar(&dbPath, "db", "litelog.db", "Path to SQLite database")
 	rootCmd.AddCommand(queryCmd)
 }
+// placeholder
