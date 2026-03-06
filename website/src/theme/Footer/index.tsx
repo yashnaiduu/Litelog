@@ -25,7 +25,7 @@ const links = [
     {
         heading: 'Legal',
         items: [
-            { label: 'License (MIT)', href: 'https://github.com/yashnaiduu/Litelog/blob/main/LICENSE' },
+            { label: 'License (Apache 2.0)', href: 'https://github.com/yashnaiduu/Litelog/blob/main/LICENSE' },
         ],
     },
 ];
@@ -75,12 +75,12 @@ export default function Footer(): ReactNode {
                 {/* Bottom bar */}
                 <div className={styles.bottom}>
                     <span className={styles.copyright}>
-                        Copyright {new Date().getFullYear()} LiteLog. Open source under MIT license.
+                        Copyright {new Date().getFullYear()} The LiteLog Authors. Open source under Apache 2.0 license.
                     </span>
                     <div className={styles.bottomLinks}>
                         <a className={styles.bottomLink} href="https://github.com/yashnaiduu/Litelog" target="_blank" rel="noopener noreferrer">GitHub</a>
                         <a className={styles.bottomLink} href="https://github.com/yashnaiduu/Litelog/issues" target="_blank" rel="noopener noreferrer">Issues</a>
-                        <a className={styles.bottomLink} href="https://github.com/yashnaiduu/Litelog/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>
+                        <a className={styles.bottomLink} href="https://github.com/yashnaiduu/Litelog/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">Apache License 2.0</a>
                     </div>
                 </div>
             </div>
