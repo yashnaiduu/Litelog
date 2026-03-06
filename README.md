@@ -187,5 +187,5 @@ Distributed under the **Apache License 2.0**. See [LICENSE](LICENSE) for details
 ---
 
 <div align="center">
-  <sub>LiteLog — centralized logging without the infrastructure.</sub>
+  <sub>Built by <a href="https://github.com/yashnaiduu">Yash Naidu</a> · Apache 2.0 Licensed</sub>
 </div>
