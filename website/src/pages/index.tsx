@@ -60,7 +60,7 @@ export default function Home(): ReactNode {
               Get Started
             </Link>
             <Link className="btn-secondary" href="https://github.com/yashnaiduu/Litelog">
-              View on GitHub
+              ★ Star on GitHub
             </Link>
           </div>
 
@@ -160,7 +160,7 @@ export default function Home(): ReactNode {
               Read the Docs
             </Link>
             <Link className="btn-secondary" href="https://github.com/yashnaiduu/Litelog">
-              Star on GitHub
+              ★ Star on GitHub
             </Link>
           </div>
         </div>

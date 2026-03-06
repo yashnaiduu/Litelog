@@ -1,18 +1,21 @@
 <div align="center">
-  <img src="assets/logo.png" alt="LiteLog Logo" width="350">
+  <img src="assets/logo.png" alt="LiteLog Logo" width="120">
+  <h1>LiteLog</h1>
   <p><b>Centralized logging without the infrastructure. The SQLite of logging systems.</b></p>
 
-  [![Go](https://img.shields.io/badge/go-1.21%2B-333333.svg?style=flat-square&logo=go)](https://github.com/yashnaiduu/Litelog)
-  [![License](https://img.shields.io/badge/license-MIT-333333.svg?style=flat-square)](https://github.com/yashnaiduu/Litelog/blob/main/LICENSE)
-  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-333333.svg?style=flat-square)](https://github.com/yashnaiduu/Litelog/pulls)
+  [![Go](https://img.shields.io/badge/go-1.21%2B-00ADD8.svg?style=flat-square&logo=go&logoColor=white)](https://go.dev/)
+  [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg?style=flat-square)](LICENSE)
+  [![CI](https://img.shields.io/github/actions/workflow/status/yashnaiduu/Litelog/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/yashnaiduu/Litelog/actions)
+  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
+  [![Go Report Card](https://goreportcard.com/badge/github.com/yashnaiduu/Litelog?style=flat-square)](https://goreportcard.com/report/github.com/yashnaiduu/Litelog)
 
   <p>
     <a href="#why-litelog">Why?</a> •
     <a href="#features">Features</a> •
-    <a href="#quick-start">Quick Start</a> •
+    <a href="#installation">Installation</a> •
     <a href="#commands">Commands</a> •
     <a href="#architecture">Architecture</a> •
-    <a href="docs/GUIDE.md">Full Guide</a>
+    <a href="#contributing">Contributing</a>
   </p>
 </div>
 
@@ -20,111 +23,100 @@
 
 ## Why LiteLog?
 
-Modern logging stacks like Elasticsearch + Logstash + Kibana or Prometheus/Grafana are powerful but overkill for side projects, small production systems, CI/CD pipelines, and indie deployments.
-
-These stacks require multiple services, gigabytes of RAM, and tedious configuration. Developers often fall back to:
+Modern logging stacks like ELK or Prometheus + Grafana are powerful — but overkill for most projects. They require multiple services, gigabytes of RAM, and tedious configuration. Developers fall back to:
 
 ```bash
 tail -f logfile | grep error
 ```
 
-LiteLog replaces this entirely. It is a single Go binary that acts as an HTTP log ingestion server, a high-performance SQLite storage engine, and a CLI query interface with real-time streaming and a live terminal dashboard.
+**LiteLog replaces this entirely.** It is a single Go binary that acts as an HTTP log ingestion server, a high-performance SQLite storage engine, and a CLI query interface with real-time streaming and a live terminal dashboard.
+
+---
 
 ## Features
 
-- **Zero Configuration:** No config files. No sidecars. Run one binary and you have a full logging stack.
-- **High Performance:** Async goroutines + SQLite WAL mode engineered for thousands of logs per second.
-- **SQL Query Engine:** Query structured logs with standard SQL directly from the terminal.
-- **Live Terminal Dashboard:** Monitor logs, services, and error rates via an `htop`-style TUI powered by BubbleTea.
-- **Micro-Footprint:** Under 40MB of RAM. Competes with stacks requiring 2GB+.
+- **Zero Configuration** — No YAML files. No containers. Run one binary and your entire logging stack is live in under a second.
+- **SQL Query Engine** — Query structured logs with standard SQL directly from the terminal. Filter, group, and aggregate with full SQLite support.
+- **Real-Time Streaming** — Stream live logs with `litelog tail`. Filter by service or severity level as events arrive.
+- **Terminal Dashboard** — A live, full-screen `htop`-style TUI dashboard powered by BubbleTea showing ingestion rates, error counts, and active services.
+- **Async Ingestion Pipeline** — The HTTP handler returns immediately. Logs are batched and flushed asynchronously via background goroutines.
+- **Micro-Footprint** — Under 40MB of RAM. Competes with stacks requiring 2GB+.
 
-## Quick Start
+---
 
-**Install with Go:**
+## Installation
+
+**Install with `go install`:**
 ```bash
 go install github.com/yashnaiduu/Litelog/cmd/litelog@latest
 ```
 
-**Or clone and build from source:**
+**Clone and build from source:**
 ```bash
 git clone https://github.com/yashnaiduu/Litelog.git
 cd Litelog
-go build -o litelog cmd/litelog/main.go
+go build -o litelog ./cmd/litelog
 ```
 
-**Start the server:**
+**Download a prebuilt binary:**
+
+See the [Releases](https://github.com/yashnaiduu/Litelog/releases) page for prebuilt binaries for Linux, macOS, and Windows (via GoReleaser).
+
+---
+
+## Quick Start
+
 ```bash
+# Start the log server (7-day retention)
 ./litelog start --retention 7d
+
+# Pipe your app's output directly in
+python my_app.py 2>&1 | litelog ingest
+
+# Stream live logs
+litelog tail --level ERROR --service auth-service
+
+# Query with SQL
+litelog query "SELECT service, COUNT(*) FROM logs GROUP BY service"
 ```
 
-Server listens on `localhost:8080` and creates `litelog.db` automatically.
+The server listens on `localhost:8080` and creates `litelog.db` automatically.
+
+---
 
 ## Commands
 
-### `litelog ingest`
-Pipe any program's output directly into LiteLog.
-
-```bash
-python my_app.py 2>&1 | litelog ingest
-```
+| Command | Description |
+|---|---|
+| `litelog start` | Start the HTTP ingestion server |
+| `litelog ingest` | Pipe stdin into LiteLog |
+| `litelog tail` | Stream live logs with optional filters |
+| `litelog query "<sql>"` | Run SQL against the log database |
+| `litelog dashboard` | Open the full-screen TUI dashboard |
+| `litelog export` | Export logs to JSON or CSV |
 
 ### `litelog tail`
-Stream logs live in the terminal with optional filters.
-
 ```bash
 litelog tail --level ERROR --service auth-service
 ```
 
 ### `litelog query`
-Run standard SQL against your log database.
-
 ```bash
 litelog query "SELECT timestamp, message FROM logs WHERE level='ERROR' LIMIT 10"
-litelog query "SELECT service, COUNT(*) FROM logs GROUP BY service"
-```
-
-### `litelog dashboard`
-Open a full-screen live terminal dashboard.
-
-```bash
-litelog dashboard
+litelog query "SELECT service, COUNT(*) FROM logs GROUP BY service ORDER BY COUNT(*) DESC"
 ```
 
 ### `litelog export`
-Export logs to JSON or CSV.
-
 ```bash
 litelog export --service auth-service --format json > auth-logs.json
+litelog export --format csv > all-logs.csv
 ```
 
-## Benchmarks
+---
 
-| Tool | RAM Usage |
-|---|---|
-| ELK Stack | 2GB+ |
-| **LiteLog** | **~40MB** |
-
-| Tool | Startup Time |
-|---|---|
-| Elasticsearch | ~30s |
-| **LiteLog** | **< 1s** |
-
-## Architecture
-
-```mermaid
-flowchart TD
-    A[Applications / Scripts / Docker] -->|HTTP POST JSON| B(HTTP Ingestion Server)
-    A2[Piped stdin] -->|litelog ingest| B
-    B -->|Async/Batched| D[(SQLite Engine / WAL Mode)]
-    E[litelog query] -->|Direct SQL| D
-    F[litelog tail] -->|Polling Stream| D
-    G[litelog dashboard] -->|Analytics Queries| D
-```
-
-## API Reference
+## HTTP API
 
 **POST /ingest**
-
 ```bash
 curl -X POST http://localhost:8080/ingest \
   -H "Content-Type: application/json" \
@@ -137,24 +129,60 @@ curl -X POST http://localhost:8080/ingest \
 
 Returns `200 OK` on a valid payload.
 
-## Roadmap
+---
 
-- **Phase 1** (Current): Ingestion server, SQLite storage, SQL CLI, streaming, terminal dashboard
-- **Phase 2**: Regex filters in tail, custom TUI charts, `json_extract` support in queries
-- **Phase 3**: Docker logging driver, distributed instances via Raft
+## Benchmarks
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/my-feature`)
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
-## License
-
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+| Tool | RAM Usage | Startup Time |
+|---|---|---|
+| ELK Stack | 2 GB+ | ~30s |
+| Prometheus + Grafana | 500 MB+ | ~15s |
+| **LiteLog** | **~40 MB** | **< 1s** |
 
 ---
 
-> LiteLog — centralized logging without the infrastructure.
+## Architecture
+
+```mermaid
+flowchart TD
+    A[Applications / Scripts / Docker] -->|HTTP POST JSON| B(HTTP Ingestion Server)
+    A2[Piped stdin] -->|litelog ingest| B
+    B -->|Async/Batched| D[(SQLite Engine — WAL Mode)]
+    E[litelog query] -->|Direct SQL| D
+    F[litelog tail] -->|Polling Stream| D
+    G[litelog dashboard] -->|Analytics Queries| D
+```
+
+---
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the full planned feature set.
+
+- **Phase 1** ✅ — Ingestion server, SQLite storage, SQL CLI, streaming, terminal dashboard
+- **Phase 2** — Regex filters, `json_extract`, named queries, TUI charts
+- **Phase 3** — Docker logging driver, OpenTelemetry ingest, SD-notify
+- **Phase 4** — Distributed mode via Raft, read replicas, remote WAL sync
+
+---
+
+## Contributing
+
+LiteLog is fully open source under the Apache 2.0 license. Contributions are welcome.
+
+- Report bugs or request features via [GitHub Issues](https://github.com/yashnaiduu/Litelog/issues)
+- Read the [Contributing Guide](CONTRIBUTING.md) for setup, standards, and PR process
+- Review the [Code of Conduct](CODE_OF_CONDUCT.md)
+- Check the [Security Policy](SECURITY.md) for reporting vulnerabilities
+
+---
+
+## License
+
+Distributed under the **Apache License 2.0**. See [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+  <sub>LiteLog — centralized logging without the infrastructure.</sub>
+</div>
