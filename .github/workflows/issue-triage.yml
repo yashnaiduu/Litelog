@@ -25,11 +25,23 @@ jobs:
 
       - name: Welcome first-time contributor
         uses: actions/github-script@v7
+        env:
+          WELCOME_BODY: |
+            Hey {creator}, thanks for opening your first issue on LiteLog!
+
+            A maintainer will review this shortly. In the meantime, please ensure:
+
+            - The issue title clearly describes the problem or request
+            - All relevant sections of the template are filled in
+            - You have checked existing issues to avoid duplicates
+
+            If you would like to work on this yourself, please comment with your proposed approach first — describe what you plan to change and why. A maintainer will acknowledge it before you start. This keeps efforts aligned and avoids duplicate work.
+
+            See CONTRIBUTING.md for full contribution guidelines.
         with:
           script: |
             const creator = context.payload.issue.user.login;
 
-            // Check if this is their first issue on the repo
             const issues = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -38,22 +50,15 @@ jobs:
               per_page: 2
             });
 
-            const isFirstIssue = issues.data.length <= 1;
-            if (!isFirstIssue) return;
+            if (issues.data.length > 1) return;
+
+            const body = process.env.WELCOME_BODY
+              .replace('{creator}', `@${creator}`)
+              + `\nhttps://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/CONTRIBUTING.md`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `👋 Hey @${creator}, thanks for opening your first issue on LiteLog!
-
-A maintainer will review this shortly. In the meantime, please ensure:
-
-- [ ] The issue title clearly describes the problem or request
-- [ ] All relevant sections of the template are filled in
-- [ ] You have checked [existing issues](https://github.com/${context.repo.owner}/${context.repo.repo}/issues) to avoid duplicates
-
-If you'd like to work on this yourself, please **comment with your proposed approach first** — describe what you plan to change and why. A maintainer will acknowledge it before you start. This keeps efforts aligned and avoids duplicate work.
-
-📖 See [CONTRIBUTING.md](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/CONTRIBUTING.md) for full contribution guidelines.`
+              body
             });
