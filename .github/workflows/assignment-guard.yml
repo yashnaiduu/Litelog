@@ -19,18 +19,15 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const body = context.payload.comment.body.toLowerCase();
             const commenter = context.payload.comment.user.login;
-            const isCollaborator = await github.rest.repos.checkCollaborator({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              username: commenter
-            }).then(() => true).catch(() => false);
+            const owner = context.repo.owner;
 
-            // Skip maintainers / collaborators
-            if (isCollaborator) return;
+            // Skip the repo owner
+            if (commenter === owner) return;
 
-            // Detect bare "assign me" type comments with no substance
+            const body = context.payload.comment.body;
+
+            // Detect bare "assign me" type comments
             const assignPatterns = [
               /assign\s*(me|this\s*to\s*me)/i,
               /can\s*i\s*(work|take|own|fix|do)\s*(on\s*)?this/i,
@@ -41,8 +38,7 @@ jobs:
 
             const isAssignRequest = assignPatterns.some(p => p.test(body));
 
-            // A "proposal" comment should be reasonably substantive (>80 chars)
-            // and contain technical keywords
+            // A proposal must be substantive (>80 chars) and contain technical intent
             const hasProposal = body.length > 80 && (
               /approach|plan|implement|fix|refactor|change|solution|proposal|idea|suggest/i.test(body)
             );
@@ -51,15 +47,15 @@ jobs:
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
+                issue_number: context.payload.issue.number,
                 body: `Hey @${commenter}, thanks for your interest! 🙌
 
 Before being assigned, please share a **brief technical proposal** in a follow-up comment:
 
 - What is the root cause or scope of this issue?
 - What approach do you plan to take to fix or implement it?
-- Are there any trade-offs or edges you've considered?
+- Are there any trade-offs or edge cases you've considered?
 
-Once a maintainer reviews your approach and gives the go-ahead, we'll be happy to assign this to you. This keeps the work focused and avoids duplicated effort from multiple contributors.`
+Once a maintainer reviews your approach and gives the go-ahead, we'll be happy to assign this to you. This keeps the work focused and avoids duplicated effort.`
               });
             }
