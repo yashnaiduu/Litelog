@@ -1,0 +1,36 @@
+name: Stale Issues
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday at 08:00 UTC
+  workflow_dispatch:
+
+jobs:
+  stale:
+    name: Mark and Close Stale Issues
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+          # Issues
+          days-before-issue-stale: 30
+          days-before-issue-close: 14
+          stale-issue-label: stale
+          stale-issue-message: |
+            This issue has had no activity for **30 days** and has been marked as stale.
+
+            If this is still relevant, please leave a comment or update the issue with additional context. It will be closed in **14 days** if there is no further activity.
+          close-issue-message: |
+            Closing due to inactivity. If this issue is still relevant, feel free to reopen it with updated context.
+
+          # PRs — handled separately
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+
+          # Never stale issues with these labels
+          exempt-issue-labels: 'pinned,security,in-progress,blocked,help wanted'
