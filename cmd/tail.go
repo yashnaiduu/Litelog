@@ -3,12 +3,15 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/yashnaidu/litelog/models"
 	"github.com/yashnaidu/litelog/storage"
 )
+
+const ansiReset = "\033[0m"
 
 var tailLevel string
 var tailService string
@@ -67,7 +70,7 @@ var tailCmd = &cobra.Command{
 					ts = parsedTs.Format("15:04:05")
 				}
 
-				fmt.Printf("[%s] %-5s %-15s %s\n", ts, entry.Level, entry.Service, entry.Message)
+				fmt.Printf("[%s] %-5s %-15s %s\n", ts, colorizeLevel(entry.Level), entry.Service, entry.Message)
 
 				maxID = entry.ID
 				hasNewLogs = true
@@ -81,6 +84,26 @@ var tailCmd = &cobra.Command{
 			time.Sleep(500 * time.Millisecond)
 		}
 	},
+}
+
+func colorizeLevel(level string) string {
+	upperLevel := strings.ToUpper(level)
+
+	var color string
+	switch upperLevel {
+	case "ERROR", "FATAL":
+		color = "\033[31m"
+	case "WARN", "WARNING":
+		color = "\033[33m"
+	case "INFO":
+		color = "\033[32m"
+	case "DEBUG":
+		color = "\033[36m"
+	default:
+		return level
+	}
+
+	return color + level + ansiReset
 }
 
 func init() {
