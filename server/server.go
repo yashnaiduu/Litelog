@@ -1,10 +1,12 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/yashnaiduu/Litelog/models"
@@ -17,29 +19,43 @@ func init() {
 	LogQueue = make(chan models.LogEntry, 100000)
 }
 
-func StartAsyncWorker() {
+func StartAsyncWorker(ctx context.Context, wg *sync.WaitGroup) {
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		var batch []models.LogEntry
 		ticker := time.NewTicker(200 * time.Millisecond)
 		defer ticker.Stop()
 
+		flush := func() {
+			if len(batch) > 0 {
+				if err := storage.InsertLogBatch(batch); err != nil {
+					log.Printf("Batch insert failed: %v", err)
+				}
+				batch = batch[:0]
+			}
+		}
+
 		for {
 			select {
+			case <-ctx.Done():
+				// Drain the queue to ensure no logs are lost
+				for {
+					select {
+					case entry := <-LogQueue:
+						batch = append(batch, entry)
+					default:
+						flush()
+						return
+					}
+				}
 			case entry := <-LogQueue:
 				batch = append(batch, entry)
 				if len(batch) >= 100 {
-					if err := storage.InsertLogBatch(batch); err != nil {
-						log.Printf("Batch insert failed: %v", err)
-					}
-					batch = batch[:0]
+					flush()
 				}
 			case <-ticker.C:
-				if len(batch) > 0 {
-					if err := storage.InsertLogBatch(batch); err != nil {
-						log.Printf("Batch insert failed: %v", err)
-					}
-					batch = batch[:0]
-				}
+				flush()
 			}
 		}
 	}()
@@ -51,10 +67,11 @@ type IngestRequest struct {
 	Message string `json:"message"`
 }
 
-func StartHttpServer(port string) error {
-	StartAsyncWorker()
+func StartHttpServer(ctx context.Context, wg *sync.WaitGroup, port string) error {
+	StartAsyncWorker(ctx, wg)
 
-	http.HandleFunc("/ingest", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/ingest", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
@@ -78,9 +95,26 @@ func StartHttpServer(port string) error {
 		}
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("ok\n"))
+		_, _ = w.Write([]byte("ok\n"))
 	})
 
+	srv := &http.Server{
+		Addr:    ":" + port,
+		Handler: mux,
+	}
+
+	go func() {
+		<-ctx.Done()
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := srv.Shutdown(shutdownCtx); err != nil {
+			log.Printf("HTTP server shutdown error: %v", err)
+		}
+	}()
+
 	fmt.Printf("LiteLog server listening on port %s\n", port)
-	return http.ListenAndServe(":"+port, nil)
+	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		return err
+	}
+	return nil
 }
