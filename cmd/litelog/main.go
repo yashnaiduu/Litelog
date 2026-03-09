@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/yashnaidu/litelog/cmd"
+	"github.com/yashnaiduu/Litelog/cmd"
 )
 
 func main() {

@@ -3,7 +3,7 @@ package storage
 import (
 	"database/sql"
 
-	"github.com/yashnaidu/litelog/models"
+	"github.com/yashnaiduu/Litelog/models"
 	_ "modernc.org/sqlite"
 )
 
@@ -83,7 +83,7 @@ func QueryLogs(level, service string, limit int) ([]models.LogEntry, error) {
 		query += " AND service = ?"
 		args = append(args, service)
 	}
-	
+
 	if limit > 0 {
 		query += " ORDER BY timestamp DESC LIMIT ?"
 		args = append(args, limit)

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yashnaidu/litelog/models"
+	"github.com/yashnaiduu/Litelog/models"
 )
 
 func TestDBInitialization(t *testing.T) {

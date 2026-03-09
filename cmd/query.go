@@ -8,7 +8,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
-	"github.com/yashnaidu/litelog/storage"
+	"github.com/yashnaiduu/Litelog/storage"
 )
 
 var queryCmd = &cobra.Command{

@@ -1,4 +1,4 @@
-module github.com/yashnaidu/litelog
+module github.com/yashnaiduu/Litelog
 
 go 1.24.2
 

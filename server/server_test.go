@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yashnaidu/litelog/models"
-	"github.com/yashnaidu/litelog/storage"
+	"github.com/yashnaiduu/Litelog/models"
+	"github.com/yashnaiduu/Litelog/storage"
 )
 
 func TestIngestEndpoint(t *testing.T) {

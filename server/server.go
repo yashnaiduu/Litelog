@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/yashnaidu/litelog/models"
-	"github.com/yashnaidu/litelog/storage"
+	"github.com/yashnaiduu/Litelog/models"
+	"github.com/yashnaiduu/Litelog/storage"
 )
 
 var LogQueue chan models.LogEntry
