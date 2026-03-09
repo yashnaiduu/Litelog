@@ -29,7 +29,12 @@ func StartAsyncWorker(ctx context.Context, wg *sync.WaitGroup, store *storage.St
 
 		flush := func() {
 			if len(batch) > 0 {
-				if err := store.InsertLogBatch(batch); err != nil {
+				// We intentionally decouple this context from the parent context.
+				// If the server receives SIGTERM, the parent context cancels, triggering flush.
+				// We don't want the insert to instantly cancel, so we use a fresh 5s timeout.
+				insertCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+				defer cancel()
+				if err := store.InsertLogBatch(insertCtx, batch); err != nil {
 					log.Printf("Batch insert failed: %v", err)
 				}
 				batch = batch[:0]

@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/yashnaiduu/Litelog/models"
@@ -32,9 +34,9 @@ var exportCmd = &cobra.Command{
 			queryArgs = append(queryArgs, exportService)
 		}
 
-		query += " ORDER BY id ASC"
-
-		rows, err := store.DB.Query(query, queryArgs...)
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		rows, err := store.DB.QueryContext(ctx, query, queryArgs...)
 		if err != nil {
 			log.Fatalf("Export query failed: %v", err)
 		}

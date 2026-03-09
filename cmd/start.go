@@ -71,7 +71,9 @@ var startCmd = &cobra.Command{
 					case <-ctx.Done():
 						return
 					case <-ticker.C:
-						store.DB.Exec("DELETE FROM logs WHERE timestamp < datetime('now', ?)", modifier)
+						delCtx, delCancel := context.WithTimeout(ctx, 30*time.Second)
+						store.DB.ExecContext(delCtx, "DELETE FROM logs WHERE timestamp < datetime('now', ?)", modifier)
+						delCancel()
 					}
 				}
 			}()

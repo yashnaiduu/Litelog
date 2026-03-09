@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 	"text/tabwriter"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/yashnaiduu/Litelog/storage"
@@ -22,7 +24,9 @@ var queryCmd = &cobra.Command{
 			log.Fatalf("Failed to initialize database: %v", err)
 		}
 
-		rows, err := store.DB.Query(query)
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		rows, err := store.DB.QueryContext(ctx, query)
 		if err != nil {
 			log.Fatalf("Query failed: %v", err)
 		}

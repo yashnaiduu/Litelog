@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -31,13 +32,13 @@ func TestInsertLog(t *testing.T) {
 	}
 	defer store.DB.Close()
 
-	err = store.InsertLog("INFO", "test-service", "this is a test message")
+	err = store.InsertLog(context.Background(), "INFO", "test-service", "this is a test message")
 	if err != nil {
 		t.Errorf("InsertLog failed: %v", err)
 	}
 
 	// Verify insert
-	logs, err := store.QueryLogs("INFO", "test-service", 10)
+	logs, err := store.QueryLogs(context.Background(), "INFO", "test-service", 10)
 	if err != nil {
 		t.Fatalf("QueryLogs failed: %v", err)
 	}
@@ -65,12 +66,12 @@ func TestInsertLogBatch(t *testing.T) {
 		{Level: "ERROR", Service: "payment", Message: "timeout"},
 	}
 
-	err = store.InsertLogBatch(batch)
+	err = store.InsertLogBatch(context.Background(), batch)
 	if err != nil {
 		t.Errorf("InsertLogBatch failed: %v", err)
 	}
 
-	logs, err := store.QueryLogs("ERROR", "", 10) // Should get 2 errors
+	logs, err := store.QueryLogs(context.Background(), "ERROR", "", 10) // Should get 2 errors
 	if err != nil {
 		t.Fatalf("QueryLogs failed: %v", err)
 	}
@@ -88,12 +89,12 @@ func TestQueryLogsFiltering(t *testing.T) {
 	}
 	defer store.DB.Close()
 
-	_ = store.InsertLog("INFO", "srv-A", "msga1")
-	_ = store.InsertLog("WARN", "srv-B", "msgb1")
-	_ = store.InsertLog("INFO", "srv-C", "msgc1")
+	_ = store.InsertLog(context.Background(), "INFO", "srv-A", "msga1")
+	_ = store.InsertLog(context.Background(), "WARN", "srv-B", "msgb1")
+	_ = store.InsertLog(context.Background(), "INFO", "srv-C", "msgc1")
 
 	// Query just INFO
-	logs, err := store.QueryLogs("INFO", "", 10)
+	logs, err := store.QueryLogs(context.Background(), "INFO", "", 10)
 	if err != nil {
 		t.Fatalf("QueryLogs failed: %v", err)
 	}
@@ -102,7 +103,7 @@ func TestQueryLogsFiltering(t *testing.T) {
 	}
 
 	// Query specific service
-	logs, err = store.QueryLogs("", "srv-B", 10)
+	logs, err = store.QueryLogs(context.Background(), "", "srv-B", 10)
 	if err != nil {
 		t.Fatalf("QueryLogs failed: %v", err)
 	}
@@ -122,12 +123,12 @@ func TestDeleteOldLogs(t *testing.T) {
 	}
 	defer store.DB.Close()
 
-	_ = store.InsertLog("INFO", "test", "old")
+	_ = store.InsertLog(context.Background(), "INFO", "test", "old")
 
 	// Dummy future timestamp
 	futureCutoff := time.Now().Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
-	deletedCount, err := store.DeleteOldLogs(futureCutoff)
+	deletedCount, err := store.DeleteOldLogs(context.Background(), futureCutoff)
 	if err != nil {
 		t.Fatalf("DeleteOldLogs failed: %v", err)
 	}

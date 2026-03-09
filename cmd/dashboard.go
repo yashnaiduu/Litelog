@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -63,18 +64,20 @@ type model struct {
 
 func fetchStats(store *storage.Store) DashboardStats {
 	var s DashboardStats
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	store.DB.QueryRow("SELECT COUNT(*) FROM logs").Scan(&s.TotalLogs)
+	store.DB.QueryRowContext(ctx, "SELECT COUNT(*) FROM logs").Scan(&s.TotalLogs)
 
 	var logsLast5 int
-	store.DB.QueryRow("SELECT COUNT(*) FROM logs WHERE timestamp >= datetime('now', '-5 seconds')").Scan(&logsLast5)
+	store.DB.QueryRowContext(ctx, "SELECT COUNT(*) FROM logs WHERE timestamp >= datetime('now', '-5 seconds')").Scan(&logsLast5)
 	s.LogsPerSec = logsLast5 / 5
 
-	store.DB.QueryRow("SELECT COUNT(*) FROM logs WHERE level = 'ERROR' AND timestamp >= datetime('now', '-1 minute')").Scan(&s.ErrorsPerMin)
+	store.DB.QueryRowContext(ctx, "SELECT COUNT(*) FROM logs WHERE level = 'ERROR' AND timestamp >= datetime('now', '-1 minute')").Scan(&s.ErrorsPerMin)
 
-	store.DB.QueryRow("SELECT COUNT(DISTINCT service) FROM logs WHERE timestamp >= datetime('now', '-5 minutes')").Scan(&s.ActiveServices)
+	store.DB.QueryRowContext(ctx, "SELECT COUNT(DISTINCT service) FROM logs WHERE timestamp >= datetime('now', '-5 minutes')").Scan(&s.ActiveServices)
 
-	rows, err := store.DB.Query("SELECT service, COUNT(*) as c FROM logs GROUP BY service ORDER BY c DESC LIMIT 5")
+	rows, err := store.DB.QueryContext(ctx, "SELECT service, COUNT(*) as c FROM logs GROUP BY service ORDER BY c DESC LIMIT 5")
 	if err == nil {
 		for rows.Next() {
 			var ss ServiceStat
@@ -84,7 +87,7 @@ func fetchStats(store *storage.Store) DashboardStats {
 		rows.Close()
 	}
 
-	rows, err = store.DB.Query("SELECT id, timestamp, level, service, message FROM logs WHERE level = 'ERROR' ORDER BY timestamp DESC LIMIT 5")
+	rows, err = store.DB.QueryContext(ctx, "SELECT id, timestamp, level, service, message FROM logs WHERE level = 'ERROR' ORDER BY timestamp DESC LIMIT 5")
 	if err == nil {
 		for rows.Next() {
 			var e models.LogEntry
