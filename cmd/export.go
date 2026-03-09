@@ -65,7 +65,7 @@ var exportCmd = &cobra.Command{
 			}
 			writer.Flush()
 		} else {
-			// default to JSON
+			// fallback JSON
 			encoder := json.NewEncoder(os.Stdout)
 			encoder.SetIndent("", "  ")
 			if err := encoder.Encode(logs); err != nil {

@@ -66,6 +66,16 @@ See the [Releases](https://github.com/yashnaiduu/Litelog/releases) page for preb
 
 ---
 
+## Testing
+
+LiteLog includes a test suite covering the SQLite storage engine and HTTP ingestion logic. To run the tests:
+
+```bash
+go test ./... -v
+```
+
+---
+
 ## Quick Start
 
 ```bash
@@ -155,16 +165,7 @@ flowchart TD
     G[litelog dashboard] -->|Analytics Queries| D
 ```
 
----
 
-## Roadmap
-
-See [ROADMAP.md](ROADMAP.md) for the full planned feature set.
-
-- **Phase 1** ✅ — Ingestion server, SQLite storage, SQL CLI, streaming, terminal dashboard
-- **Phase 2** — Regex filters, `json_extract`, named queries, TUI charts
-- **Phase 3** — Docker logging driver, OpenTelemetry ingest, SD-notify
-- **Phase 4** — Distributed mode via Raft, read replicas, remote WAL sync
 
 ---
 
