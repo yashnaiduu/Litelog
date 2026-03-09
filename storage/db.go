@@ -117,6 +117,10 @@ func (s *Store) QueryLogs(ctx context.Context, level, service string, limit int)
 		}
 		logs = append(logs, log)
 	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 	return logs, nil
 }
 
