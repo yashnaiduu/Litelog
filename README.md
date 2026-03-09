@@ -66,6 +66,16 @@ See the [Releases](https://github.com/yashnaiduu/Litelog/releases) page for preb
 
 ---
 
+## Testing
+
+LiteLog includes a test suite covering the SQLite storage engine and HTTP ingestion logic. To run the tests:
+
+```bash
+go test ./... -v
+```
+
+---
+
 ## Quick Start
 
 ```bash
