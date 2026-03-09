@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"
@@ -17,7 +18,8 @@ var tailCmd = &cobra.Command{
 	Use:   "tail",
 	Short: "Stream real-time logs",
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := storage.InitDB(dbPath); err != nil {
+		store, err := storage.InitDB(dbPath)
+		if err != nil {
 			log.Fatalf("Failed to initialize database: %v", err)
 		}
 
@@ -25,10 +27,12 @@ var tailCmd = &cobra.Command{
 
 		var lastID int64 = 0
 
-		row := storage.DB.QueryRow("SELECT COALESCE(MAX(id), 0) FROM logs")
+		ctxInit, cancelInit := context.WithTimeout(context.Background(), 5*time.Second)
+		row := store.DB.QueryRowContext(ctxInit, "SELECT COALESCE(MAX(id), 0) FROM logs")
 		if err := row.Scan(&lastID); err != nil {
 			log.Printf("Failed to get latest log ID: %v", err)
 		}
+		cancelInit()
 
 		for {
 			query := "SELECT id, timestamp, level, service, message FROM logs WHERE id > ?"
@@ -45,8 +49,10 @@ var tailCmd = &cobra.Command{
 			}
 			query += " ORDER BY id ASC"
 
-			rows, err := storage.DB.Query(query, queryArgs...)
+			ctxTail, cancelTail := context.WithTimeout(context.Background(), 5*time.Second)
+			rows, err := store.DB.QueryContext(ctxTail, query, queryArgs...)
 			if err != nil {
+				cancelTail()
 				log.Fatalf("Tail query failed: %v", err)
 			}
 

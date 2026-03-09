@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/yashnaiduu/Litelog/models"
@@ -19,7 +21,8 @@ var exportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export logs to a file",
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := storage.InitDB(dbPath); err != nil {
+		store, err := storage.InitDB(dbPath)
+		if err != nil {
 			log.Fatalf("Failed to initialize database: %v", err)
 		}
 
@@ -31,9 +34,9 @@ var exportCmd = &cobra.Command{
 			queryArgs = append(queryArgs, exportService)
 		}
 
-		query += " ORDER BY id ASC"
-
-		rows, err := storage.DB.Query(query, queryArgs...)
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		rows, err := store.DB.QueryContext(ctx, query, queryArgs...)
 		if err != nil {
 			log.Fatalf("Export query failed: %v", err)
 		}

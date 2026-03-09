@@ -1,9 +1,14 @@
 package cmd
 
 import (
+	"context"
 	"log"
+	"os"
+	"os/signal"
 	"strconv"
 	"strings"
+	"sync"
+	"syscall"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -35,9 +40,15 @@ var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start the LiteLog ingestion server",
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := storage.InitDB(dbPath); err != nil {
+		store, err := storage.InitDB(dbPath)
+		if err != nil {
 			log.Fatalf("Failed to initialize database: %v", err)
 		}
+
+		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+		defer stop()
+
+		var wg sync.WaitGroup
 
 		if retention != "" {
 			modifier := parseRetentionToSQLiteModifier(retention)
@@ -50,18 +61,31 @@ var startCmd = &cobra.Command{
 				log.Fatalf("Invalid retention value: %v", err)
 			}
 
+			wg.Add(1)
 			go func() {
+				defer wg.Done()
+				ticker := time.NewTicker(1 * time.Minute)
+				defer ticker.Stop()
 				for {
-					storage.DB.Exec("DELETE FROM logs WHERE timestamp < datetime('now', ?)", modifier)
-					time.Sleep(1 * time.Minute)
+					select {
+					case <-ctx.Done():
+						return
+					case <-ticker.C:
+						delCtx, delCancel := context.WithTimeout(ctx, 30*time.Second)
+						store.DB.ExecContext(delCtx, "DELETE FROM logs WHERE timestamp < datetime('now', ?)", modifier)
+						delCancel()
+					}
 				}
 			}()
 			log.Printf("Log retention set to %s\n", retention)
 		}
 
-		if err := server.StartHttpServer(port); err != nil {
+		if err := server.StartHttpServer(ctx, &wg, port, store); err != nil {
 			log.Fatalf("Server failed: %v", err)
 		}
+
+		wg.Wait()
+		log.Println("LiteLog shutdown complete.")
 	},
 }
 
