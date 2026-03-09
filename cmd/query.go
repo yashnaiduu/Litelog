@@ -32,7 +32,7 @@ var queryCmd = &cobra.Command{
 			log.Fatalf("Failed to get columns: %v", err)
 		}
 
-		// Setup tabwriter for aligned output
+		// Setup tabwriter
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 		fmt.Fprintln(w, strings.Join(cols, "\t"))
 

@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"os"
 	"testing"
 	"time"
 
@@ -9,7 +8,7 @@ import (
 )
 
 func TestDBInitialization(t *testing.T) {
-	dbPath := ":memory:" // Use in-memory SQLite for testing to avoid disk writing issues
+	dbPath := ":memory:" // Use in-memory db
 
 	err := InitDB(dbPath)
 	if err != nil {
@@ -20,7 +19,7 @@ func TestDBInitialization(t *testing.T) {
 		t.Fatal("DB instance is nil after successful initialization")
 	}
 
-	// Clean up after tests (if it wasn't an in-memory db, we'd delete the file)
+	// Clean up after tests
 	defer DB.Close()
 }
 
@@ -36,7 +35,7 @@ func TestInsertLog(t *testing.T) {
 		t.Errorf("InsertLog failed: %v", err)
 	}
 
-	// Verify the log was actually inserted
+	// Verify insert
 	logs, err := QueryLogs("INFO", "test-service", 10)
 	if err != nil {
 		t.Fatalf("QueryLogs failed: %v", err)
@@ -120,8 +119,8 @@ func TestDeleteOldLogs(t *testing.T) {
 	defer DB.Close()
 
 	_ = InsertLog("INFO", "test", "old")
-	
-	// Create a dummy timestamp far in the future
+
+	// Dummy future timestamp
 	futureCutoff := time.Now().Add(24 * time.Hour).Format("2006-01-02 15:04:05")
 
 	deletedCount, err := DeleteOldLogs(futureCutoff)

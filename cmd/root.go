@@ -12,7 +12,7 @@ var rootCmd = &cobra.Command{
 	Long:  `LiteLog — the SQLite of logging systems. A single binary for log ingestion, querying, and real-time streaming.`,
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
+// Execute adds child commands.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
