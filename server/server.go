@@ -106,6 +106,16 @@ func StartHttpServer(ctx context.Context, wg *sync.WaitGroup, port string, store
 		}
 	})
 
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status":"ok"}` + "\n"))
+	})
+
 	srv := &http.Server{
 		Addr:    ":" + port,
 		Handler: mux,

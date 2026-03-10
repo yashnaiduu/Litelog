@@ -1,24 +1,26 @@
 <div align="center">
   <img src="assets/logo.png" alt="LiteLog Logo" width="120">
+  
   <h1>LiteLog</h1>
-  <p><b>Centralized logging without the infrastructure. The SQLite of logging systems.</b></p>
-
-  [![Go](https://img.shields.io/badge/go-1.21%2B-00ADD8.svg?style=flat-square&logo=go&logoColor=white)](https://go.dev/)
-  [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg?style=flat-square)](LICENSE)
-  [![CI](https://img.shields.io/github/actions/workflow/status/yashnaiduu/Litelog/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/yashnaiduu/Litelog/actions)
-  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
-  [![Go Report Card](https://goreportcard.com/badge/github.com/yashnaiduu/Litelog?style=flat-square)](https://goreportcard.com/report/github.com/yashnaiduu/Litelog)
-  [![Website](https://img.shields.io/badge/website-litelog-04b575.svg?style=flat-square)](https://yashnaiduu.github.io/Litelog/)
-
-  <p>
-    <a href="https://yashnaiduu.github.io/Litelog/">Website</a> •
-    <a href="#why-litelog">Why?</a> •
-    <a href="#features">Features</a> •
-    <a href="#installation">Installation</a> •
-    <a href="#commands">Commands</a> •
-    <a href="#architecture">Architecture</a> •
-    <a href="#contributing">Contributing</a>
-  </p>
+  
+  **The SQLite of logging systems. Centralized logging without the infrastructure.**
+  <br />
+  
+  [![Go Report Card](https://goreportcard.com/badge/github.com/yashnaiduu/Litelog)](https://goreportcard.com/report/github.com/yashnaiduu/Litelog)
+  [![License](https://img.shields.io/github/license/yashnaiduu/Litelog)](LICENSE)
+  [![Build Status](https://github.com/yashnaiduu/Litelog/actions/workflows/ci.yml/badge.svg)](https://github.com/yashnaiduu/Litelog/actions/workflows/ci.yml)
+  [![Website](https://img.shields.io/badge/docs-website-blue)](https://yashnaiduu.github.io/Litelog/)
+  
+  <br />
+  <a href="https://yashnaiduu.github.io/Litelog/">Website</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="#why-litelog">Why?</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="#features">Features</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="#installation">Installation</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="#commands">Commands</a>
 </div>
 
 ---
